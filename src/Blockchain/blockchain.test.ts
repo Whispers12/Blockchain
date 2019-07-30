@@ -78,7 +78,7 @@ describe("Blockchain", () => {
   });
 
   describe("replace chain", () => {
-    let errorMock, logMock;
+    let errorMock: typeof jest.fn, logMock: typeof jest.fn;
 
     beforeEach(function() {
       errorMock = jest.fn();
@@ -89,7 +89,7 @@ describe("Blockchain", () => {
     });
 
     describe("new chain is not longer", () => {
-      it("should does not replace the chain", () => {
+      beforeEach(function() {
         newChain.chain[0] = {
           data: "wrong-genesis",
           timestamp: 1,
@@ -98,8 +98,14 @@ describe("Blockchain", () => {
         };
 
         blockchain.replaceChain(newChain.chain);
+      });
 
+      it("should does not replace the chain", () => {
         expect(blockchain.chain).toEqual(originalChain);
+      });
+
+      it("should logs an error", () => {
+        expect(errorMock).toHaveBeenCalled();
       });
     });
 
@@ -112,20 +118,32 @@ describe("Blockchain", () => {
       });
 
       describe("and the chain is invalid", () => {
-        it("should does not replace the chain", () => {
+        beforeEach(function() {
           newChain.chain[2].hash = "fake-hash";
 
           blockchain.replaceChain(newChain.chain);
+        });
 
+        it("should does not replace the chain", () => {
           expect(blockchain.chain).toEqual(originalChain);
+        });
+
+        it("should logs an error", () => {
+          expect(errorMock).toHaveBeenCalled();
         });
       });
 
       describe("and the chain is valid", () => {
-        it("should  replace the chain", () => {
+        beforeEach(function() {
           blockchain.replaceChain(newChain.chain);
+        });
 
+        it("should  replace the chain", () => {
           expect(blockchain.chain).toEqual(newChain.chain);
+        });
+
+        it("should logs about replace chain", () => {
+          expect(logMock).toHaveBeenCalled();
         });
       });
     });
