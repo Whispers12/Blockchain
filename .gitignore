@@ -1,0 +1,19 @@
+# OSX
+#
+.DS_Store
+.vscode/
+
+# node.js
+#
+node_modules/
+build/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+yarn-error.log*
+
+# misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
