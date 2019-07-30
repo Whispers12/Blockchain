@@ -6,6 +6,8 @@ type IBlock = {
   lastHash: string;
   hash: string;
   data: any;
+  nonce: number;
+  difficulty: number;
 };
 
 class Block {
@@ -13,11 +15,15 @@ class Block {
   lastHash: string;
   hash: string;
   data: any;
-  constructor({ timestamp, lastHash, hash, data }: IBlock) {
+  nonce: number;
+  difficulty: number;
+  constructor({ timestamp, lastHash, hash, data, nonce, difficulty }: IBlock) {
     this.timestamp = timestamp;
     this.lastHash = lastHash;
     this.hash = hash;
     this.data = data;
+    this.nonce = nonce;
+    this.difficulty = difficulty;
   }
 
   static genesis() {
@@ -27,12 +33,17 @@ class Block {
   static mineBlock({ lastBlock, data }: { lastBlock: IBlock; data: any }) {
     const timestamp = Date.now();
     const lastHash = lastBlock.hash;
+    const { difficulty } = lastBlock;
+
+    let nonce = 0;
 
     // TODO: add hash
     return new Block({
       timestamp,
       lastHash,
       data,
+      difficulty,
+      nonce,
       hash: cryptoHash(timestamp, lastHash, data)
     });
   }
