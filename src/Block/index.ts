@@ -9,10 +9,10 @@ type IBlock = {
 };
 
 class Block {
-  public readonly timestamp: number;
-  public readonly lastHash: string;
-  public readonly hash: string;
-  public readonly data: any;
+  timestamp: number;
+  lastHash: string;
+  hash: string;
+  data: any;
   constructor({ timestamp, lastHash, hash, data }: IBlock) {
     this.timestamp = timestamp;
     this.lastHash = lastHash;
