@@ -80,7 +80,12 @@ describe("Blockchain", () => {
   describe("replace chain", () => {
     describe("new chain is not longer", () => {
       it("should does not replace the chain", () => {
-        newChain.chain[0] = { new: "chain" };
+        newChain.chain[0] = {
+          data: "wrong-genesis",
+          timestamp: 1,
+          lastHash: "dsadas",
+          hash: "sadas"
+        };
 
         blockchain.replaceChain(newChain.chain);
 
@@ -90,7 +95,7 @@ describe("Blockchain", () => {
 
     describe("when the chain is longer", () => {
       beforeEach(function() {
-        blockchain
+        newChain
           .addBlock({ data: "Bek" })
           .addBlock({ data: "kek" })
           .addBlock({ data: "ollol" });
