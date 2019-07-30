@@ -2,7 +2,7 @@
  * its data needed for first block in blockchain
  */
 const GENESIS_DATA = {
-  timestamp: "1asd",
+  timestamp: 1,
   lastHash: "-----",
   hash: "hash-one",
   data: []
