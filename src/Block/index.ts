@@ -31,11 +31,18 @@ class Block {
   }
 
   static mineBlock({ lastBlock, data }: { lastBlock: IBlock; data: any }) {
-    const timestamp = Date.now();
+    let hash, timestamp;
+
     const lastHash = lastBlock.hash;
     const { difficulty } = lastBlock;
 
     let nonce = 0;
+
+    do {
+      nonce++;
+      timestamp = Date.now();
+      hash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
+    } while (hash.substring(0, difficulty) !== "0".repeat(difficulty));
 
     // TODO: add hash
     return new Block({
@@ -44,7 +51,7 @@ class Block {
       data,
       difficulty,
       nonce,
-      hash: cryptoHash(timestamp, lastHash, data)
+      hash
     });
   }
 }
