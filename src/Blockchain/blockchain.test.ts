@@ -4,9 +4,15 @@ import { head } from "../utils/head";
 
 describe("Blockchain", () => {
   let blockchain: Blockchain;
+  let newChain: Blockchain;
+  let originalChain: Block[];
 
   beforeEach(() => {
     blockchain = new Blockchain();
+
+    newChain = new Blockchain();
+
+    originalChain = blockchain.chain;
   });
 
   it("should contins a chain array", () => {
@@ -71,5 +77,42 @@ describe("Blockchain", () => {
     });
   });
 
-  describe("replace chain", () => {});
+  describe("replace chain", () => {
+    describe("new chain is not longer", () => {
+      it("should does not replace the chain", () => {
+        newChain.chain[0] = { new: "chain" };
+
+        blockchain.replaceChain(newChain.chain);
+
+        expect(blockchain.chain).toEqual(originalChain);
+      });
+    });
+
+    describe("when the chain is longer", () => {
+      beforeEach(function() {
+        blockchain
+          .addBlock({ data: "Bek" })
+          .addBlock({ data: "kek" })
+          .addBlock({ data: "ollol" });
+      });
+
+      describe("and the chain is invalid", () => {
+        it("should does not replace the chain", () => {
+          newChain.chain[2].hash = "fake-hash";
+
+          blockchain.replaceChain(newChain.chain);
+
+          expect(blockchain.chain).toEqual(originalChain);
+        });
+      });
+
+      describe("and the chain is valid", () => {
+        it("should  replace the chain", () => {
+          blockchain.replaceChain(newChain.chain);
+
+          expect(blockchain.chain).toEqual(newChain.chain);
+        });
+      });
+    });
+  });
 });
