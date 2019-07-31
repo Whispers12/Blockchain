@@ -35,7 +35,9 @@ class PubSub {
   }
 
   publish({ channel, message }: { channel: string; message: string }) {
+    this.subscriber.unsubscribe(channel);
     this.publisher.publish(channel, message);
+    this.subscriber.subscribe(channel);
   }
 
   handleMessage(channel: string, message: string) {

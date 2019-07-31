@@ -4,23 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run start-redis && npm run build:live",
+    "dev": "npm run start:redis && npm run build:live",
     "build": "tsc -p .",
     "benchmark": "ts-node src/tools/average-work.ts",
     "test": "jest --watchAll",
-    "start-redis": "redis-server --daemonize yes",
+    "start:redis": "redis-server --daemonize yes",
+    "dev:peer": "cross-env GENERATE_PEER_PORT='true' npm run dev",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server/index.ts"
   },
   "dependencies": {
     "fastify": "^2.7.0",
-    "ioredis": "^4.11.2"
+    "ioredis": "^4.11.2",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "@types/ioredis": "^4.0.13",
     "@types/jest": "^24.0.16",
     "@types/node": "^12.0.2",
+    "@types/request": "^2.48.2",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
+    "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "jest": "^24.8.0",
