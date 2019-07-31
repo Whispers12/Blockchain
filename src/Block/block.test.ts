@@ -1,6 +1,7 @@
 import { Block } from ".";
 import { GENESIS_DATA, MINE_RATE } from "../config";
 import { cryptoHash } from "../CryptoHash";
+import { hexToBin } from "../utils/hexToBin";
 
 describe("Block", () => {
   const timestamp = 2000;
@@ -74,9 +75,9 @@ describe("Block", () => {
     });
 
     it("should sets hash that matches difficulty criteria", () => {
-      expect(minedBlock.hash.substring(0, minedBlock.difficulty)).toEqual(
-        "0".repeat(minedBlock.difficulty)
-      );
+      expect(
+        hexToBin(minedBlock.hash).substring(0, minedBlock.difficulty)
+      ).toEqual("0".repeat(minedBlock.difficulty));
     });
 
     it("should adjust the difficulty", () => {
