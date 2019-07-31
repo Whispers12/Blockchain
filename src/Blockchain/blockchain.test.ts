@@ -1,6 +1,8 @@
 import { Blockchain } from "./index";
 import { Block } from "../Block/";
 import { head } from "../utils/head";
+import { last } from "../utils/last";
+import { cryptoHash } from "../CryptoHash";
 
 describe("Blockchain", () => {
   let blockchain: Blockchain;
@@ -58,6 +60,36 @@ describe("Blockchain", () => {
       describe("and a last hash reference has changed", () => {
         it("should returns false", () => {
           blockchain.chain[2].lastHash = "broken-lastHash";
+
+          expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+        });
+      });
+
+      describe("and the chain contains a block with a jumped difficulty", () => {
+        it("should return false", () => {
+          const lastBlock = last(blockchain.chain);
+
+          const lastHash = lastBlock.hash;
+
+          const timestamp = Date.now();
+
+          const nonce = 0;
+          const data = "asda";
+
+          const difficulty = lastBlock.difficulty - 3;
+
+          const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
+
+          const badBlock = new Block({
+            timestamp,
+            lastHash,
+            difficulty,
+            nonce,
+            hash,
+            data
+          });
+
+          blockchain.chain.push(badBlock);
 
           expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
         });
