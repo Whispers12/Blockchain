@@ -1,15 +1,17 @@
 import * as Redis from "ioredis";
-import { Blockchain } from "../Blockchain/";
+import { Blockchain } from "../Blockchain";
 
-type CHANNELS = {
+type TCHANNELS = {
   TEST: "TEST";
   BLOCKCHAIN: "BLOCKCHAIN";
 };
 
-const CHANNELS: CHANNELS = {
+const CHANNELS: TCHANNELS = {
   TEST: "TEST",
   BLOCKCHAIN: "BLOCKCHAIN"
 };
+
+type Channel = keyof TCHANNELS;
 
 class PubSub {
   subscriber: Redis.Redis;
@@ -29,8 +31,9 @@ class PubSub {
   }
 
   subscribeToChannels() {
-    Object.values(CHANNELS).forEach(channel => {
-      this.subscriber.subscribe(channel);
+    (Object.keys(CHANNELS) as Array<Channel>).forEach(channel => {
+      const result = CHANNELS[channel];
+      this.subscriber.subscribe(result);
     });
   }
 

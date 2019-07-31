@@ -1,6 +1,6 @@
-import { GENESIS_DATA, MINE_RATE } from "../config";
+import { GENESIS_DATA, MINE_RATE } from "../../config";
 import { cryptoHash } from "../CryptoHash";
-import { hexToBin } from "../utils/hexToBin";
+import { hexToBin } from "../../utils/hexToBin";
 
 type IBlock = {
   timestamp: number;

@@ -1,5 +1,5 @@
-import { Block } from "../Block";
-import { cryptoHash } from "../CryptoHash";
+import { Block } from "./Block";
+import { cryptoHash } from "./CryptoHash";
 
 type Chain = Array<Block>;
 class Blockchain {
