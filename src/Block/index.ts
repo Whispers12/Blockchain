@@ -1,5 +1,6 @@
 import { GENESIS_DATA, MINE_RATE } from "../config";
 import { cryptoHash } from "../CryptoHash";
+import { hexToBin } from "../utils/hexToBin";
 
 type IBlock = {
   timestamp: number;
@@ -64,7 +65,9 @@ class Block {
         timestamp
       });
       hash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
-    } while (hash.substring(0, difficulty) !== "0".repeat(difficulty));
+    } while (
+      hexToBin(hash).substring(0, difficulty) !== "0".repeat(difficulty)
+    );
 
     // TODO: add hash
     return new Block({
