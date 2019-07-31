@@ -37,6 +37,8 @@ describe("Blockchain", () => {
         blockchain.chain[0] = {
           data: "wrong-genesis",
           timestamp: 1,
+          difficulty: 3,
+          nonce: 0,
           lastHash: "dsadas",
           hash: "sadas"
         };
@@ -93,6 +95,8 @@ describe("Blockchain", () => {
         newChain.chain[0] = {
           data: "wrong-genesis",
           timestamp: 1,
+          difficulty: 3,
+          nonce: 0,
           lastHash: "dsadas",
           hash: "sadas"
         };

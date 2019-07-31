@@ -1,9 +1,9 @@
 import { Block } from ".";
-import { GENESIS_DATA } from "../config";
+import { GENESIS_DATA, MINE_RATE } from "../config";
 import { cryptoHash } from "../CryptoHash";
 
 describe("Block", () => {
-  const timestamp = 2;
+  const timestamp = 2000;
   const lastHash = "foo-hash";
   const hash = "bar-hash";
   const data = ["blockchain"];
@@ -77,6 +77,43 @@ describe("Block", () => {
       expect(minedBlock.hash.substring(0, minedBlock.difficulty)).toEqual(
         "0".repeat(minedBlock.difficulty)
       );
+    });
+
+    it("should adjust the difficulty", () => {
+      const possibleResults = [
+        lastBlock.difficulty + 1,
+        lastBlock.difficulty - 1
+      ];
+
+      expect(possibleResults.includes(minedBlock.difficulty)).toBe(true);
+    });
+  });
+
+  describe("adjust difficulty", () => {
+    it("should raises difficulty for qiuckly mined block", () => {
+      expect(
+        Block.adjustDifficulty({
+          originalBlock: block,
+          timestamp: block.timestamp + MINE_RATE - 100
+        })
+      ).toEqual(block.difficulty + 1);
+    });
+
+    it("should lower difficulty for slowly mined block", () => {
+      expect(
+        Block.adjustDifficulty({
+          originalBlock: block,
+          timestamp: block.timestamp + MINE_RATE + 100
+        })
+      ).toEqual(block.difficulty - 1);
+    });
+
+    it("should has a lower limit of 1", () => {
+      block.difficulty = -1;
+
+      expect(
+        Block.adjustDifficulty({ originalBlock: block, timestamp: 1000 })
+      ).toEqual(1);
     });
   });
 });

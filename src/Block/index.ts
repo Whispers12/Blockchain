@@ -1,4 +1,4 @@
-import { GENESIS_DATA } from "../config";
+import { GENESIS_DATA, MINE_RATE } from "../config";
 import { cryptoHash } from "../CryptoHash";
 
 type IBlock = {
@@ -30,17 +30,39 @@ class Block {
     return new Block(GENESIS_DATA);
   }
 
+  static adjustDifficulty({
+    originalBlock,
+    timestamp
+  }: {
+    originalBlock: Block;
+    timestamp: number;
+  }) {
+    const { difficulty } = originalBlock;
+
+    if (difficulty < 1) return 1;
+
+    const difference = timestamp - originalBlock.timestamp;
+
+    if (difference > MINE_RATE) return difficulty - 1;
+
+    return difficulty + 1;
+  }
+
   static mineBlock({ lastBlock, data }: { lastBlock: IBlock; data: any }) {
     let hash, timestamp;
 
     const lastHash = lastBlock.hash;
-    const { difficulty } = lastBlock;
+    let { difficulty } = lastBlock;
 
     let nonce = 0;
 
     do {
       nonce++;
       timestamp = Date.now();
+      difficulty = Block.adjustDifficulty({
+        originalBlock: lastBlock,
+        timestamp
+      });
       hash = cryptoHash(timestamp, lastHash, data, nonce, difficulty);
     } while (hash.substring(0, difficulty) !== "0".repeat(difficulty));
 

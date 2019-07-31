@@ -1,5 +1,5 @@
 const INITIAL_DIFFICULTY = 3;
-
+const MINE_RATE = 1000;
 /**
  * its data needed for first block in blockchain
  */
@@ -12,4 +12,4 @@ const GENESIS_DATA = {
   data: []
 };
 
-export { GENESIS_DATA, INITIAL_DIFFICULTY };
+export { GENESIS_DATA, MINE_RATE };
