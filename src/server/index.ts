@@ -4,6 +4,10 @@ import { Blockchain } from "../Blockchain";
 import { PubSub } from "../Pubsub";
 import * as request from "request";
 
+/*
+ * TODO: change http client
+ */
+
 const server: fastify.FastifyInstance<
   Server,
   IncomingMessage,

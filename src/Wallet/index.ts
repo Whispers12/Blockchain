@@ -1,11 +1,14 @@
 import { STARTING_BALANCE } from "../config";
+import { ec } from "../utils/ec";
 
 class Wallet {
-  publicKey: string;
-  balance: number;
+  private publicKey: string | Buffer;
+  private balance: number;
   constructor() {
     this.balance = STARTING_BALANCE;
-    this.publicKey = "123123";
+    const keyPair = ec.genKeyPair();
+
+    this.publicKey = keyPair.getPublic().encode("hex", false);
   }
 
   getBalance() {
