@@ -1,7 +1,8 @@
 import { STARTING_BALANCE } from "../config";
 import { ec } from "../utils/ec";
 import * as Elliptic from "elliptic";
-import { cryptoHash } from "../Blockchain/CryptoHash";
+import { cryptoHash } from "../Crypto";
+
 class Wallet {
   private publicKey: string | Buffer;
   private balance: number;

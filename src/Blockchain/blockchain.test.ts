@@ -2,7 +2,7 @@ import { Blockchain } from "./index";
 import { Block } from "./Block";
 import { head } from "../utils/head";
 import { last } from "../utils/last";
-import { cryptoHash } from "./CryptoHash";
+import { cryptoHash } from "../Crypto";
 
 describe("Blockchain", () => {
   let blockchain: Blockchain;

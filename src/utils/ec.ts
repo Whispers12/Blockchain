@@ -3,7 +3,7 @@
  * less dependencies - best choice
  */
 import * as EC from "elliptic";
-import { cryptoHash } from "../Blockchain/CryptoHash";
+import { cryptoHash } from "../Crypto";
 
 const ec = new EC.ec("secp256k1");
 
