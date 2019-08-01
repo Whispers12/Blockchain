@@ -8,7 +8,7 @@
  *
  */
 import * as EC from "elliptic";
-import { cryptoHash } from "../Crypto";
+import { cryptoHash } from "./cryptoHash";
 
 const ec = new EC.ec("secp256k1");
 
@@ -21,8 +21,7 @@ export type PublicKey =
 
 type ObjectForSign = {
   publicKey: PublicKey;
-
-  data: EC.BNInput;
+  data: any;
   signature: EC.ec.Signature | EC.ec.SignatureOptions | string;
 };
 

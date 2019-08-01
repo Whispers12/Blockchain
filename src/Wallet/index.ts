@@ -1,9 +1,14 @@
 import { STARTING_BALANCE } from "../config";
-import { ec } from "../utils/ec";
+import { ec } from "../Crypto/ec";
 import * as Elliptic from "elliptic";
 import { cryptoHash } from "../Crypto";
 
-class Wallet {
+interface IWallet {
+  getPublicKey(): string | Buffer;
+  sign<T>(data: T): Elliptic.ec.Signature;
+  getBalance(): number;
+}
+class Wallet implements IWallet {
   private publicKey: string | Buffer;
   private balance: number;
   private keyPair: Elliptic.ec.KeyPair;
@@ -27,4 +32,4 @@ class Wallet {
   }
 }
 
-export { Wallet };
+export { Wallet, IWallet };

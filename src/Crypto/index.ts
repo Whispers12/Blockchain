@@ -1,9 +1,4 @@
-import { createHash } from "crypto";
+import { ec, verifySignature } from "./ec";
+import { cryptoHash } from "./cryptoHash";
 
-export function cryptoHash(...inputs: Array<any>) {
-  const hash = createHash("sha256");
-
-  hash.update(inputs.sort().join(" "));
-
-  return hash.digest("hex");
-}
+export { ec, verifySignature, cryptoHash };
