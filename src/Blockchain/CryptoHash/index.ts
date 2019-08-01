@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 
-export function cryptoHash<T>(...inputs: Array<T>) {
+export function cryptoHash(...inputs: Array<any>) {
   const hash = createHash("sha256");
 
   hash.update(inputs.sort().join(" "));

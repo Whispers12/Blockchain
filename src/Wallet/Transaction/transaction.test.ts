@@ -2,7 +2,10 @@ import { Wallet } from "..";
 import { Transaction } from ".";
 
 describe("Transaction", () => {
-  let transaction: Transaction, senderWallet, recipient, amount;
+  let transaction: Transaction,
+    senderWallet: Wallet,
+    recipient: string,
+    amount: number;
 
   beforeEach(function() {
     senderWallet = new Wallet();
@@ -22,13 +25,13 @@ describe("Transaction", () => {
     });
 
     it("should outputs amount of recipient", () => {
-      expect(transaction.outputMap[recipient]).toEqual(amount);
+      expect(transaction.getOutputMap(recipient)).toEqual(amount);
     });
 
     it("should outputs the remaining balance for `sender wallet`", () => {
-      expect(transaction.outputMap[senderWallet.getPublicKey()]).toEqual(
-        senderWallet.balance - amount
-      );
+      expect(
+        transaction.getOutputMap(senderWallet.getPublicKey() as string)
+      ).toEqual(senderWallet.getBalance() - amount);
     });
   });
 });

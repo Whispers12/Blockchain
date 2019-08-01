@@ -7,13 +7,16 @@ import { cryptoHash } from "../Blockchain/CryptoHash";
 
 const ec = new EC.ec("secp256k1");
 
+export type PublicKey =
+  | Uint8Array
+  | Buffer
+  | string
+  | { x: string; y: string }
+  | EC.ec.KeyPair;
+
 type ObjectForSign = {
-  publicKey:
-    | Uint8Array
-    | Buffer
-    | string
-    | { x: string; y: string }
-    | EC.ec.KeyPair;
+  publicKey: PublicKey;
+
   data: EC.BNInput;
   signature: EC.ec.Signature | EC.ec.SignatureOptions | string;
 };
