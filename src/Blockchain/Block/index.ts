@@ -1,5 +1,5 @@
 import { GENESIS_DATA, MINE_RATE } from "../../config";
-import { cryptoHash } from "../CryptoHash";
+import { cryptoHash } from "../../Crypto";
 import { hexToBin } from "../../utils/hexToBin";
 
 type IBlock = {
