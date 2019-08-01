@@ -2,6 +2,11 @@
  * TODO: implement elliptic curves by myself
  * less dependencies - best choice
  */
+
+/*
+ * TODO: move to Crypto package
+ *
+ */
 import * as EC from "elliptic";
 import { cryptoHash } from "../Crypto";
 

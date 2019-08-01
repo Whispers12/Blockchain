@@ -1,3 +1,5 @@
+// TODO: move to Crypto
+
 type Mapping = {
   "0": "0000";
   "1": "0001";
