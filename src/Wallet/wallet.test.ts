@@ -1,6 +1,6 @@
 import { Wallet } from "./index";
 import { STARTING_BALANCE } from "../config";
-import { ec } from "../utils/ec";
+import { ec, verifySignature } from "../utils/ec";
 import * as EC from "elliptic";
 
 describe("Wallet", () => {

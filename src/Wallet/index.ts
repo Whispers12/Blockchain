@@ -1,14 +1,16 @@
 import { STARTING_BALANCE } from "../config";
 import { ec } from "../utils/ec";
-
+import * as Elliptic from "elliptic";
+import { cryptoHash } from "../Blockchain/CryptoHash";
 class Wallet {
   private publicKey: string | Buffer;
   private balance: number;
+  private keyPair: Elliptic.ec.KeyPair;
   constructor() {
     this.balance = STARTING_BALANCE;
-    const keyPair = ec.genKeyPair();
+    this.keyPair = ec.genKeyPair();
 
-    this.publicKey = keyPair.getPublic().encode("hex", false);
+    this.publicKey = this.keyPair.getPublic().encode("hex", false);
   }
 
   getBalance() {
@@ -17,6 +19,10 @@ class Wallet {
 
   getPublicKey() {
     return this.publicKey;
+  }
+
+  sign<T>(data: T) {
+    return this.keyPair.sign(cryptoHash(data));
   }
 }
 
