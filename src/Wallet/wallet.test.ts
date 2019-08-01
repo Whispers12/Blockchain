@@ -23,4 +23,27 @@ describe("Wallet", () => {
     // TODO: rewrite this dummy test
     expect(typeof wallet.getPublicKey() === "string").toBe(true);
   });
+
+  describe("signing data", () => {
+    const data = "kek";
+    it("should verifies signature", () => {
+      const isValid = verifySignature({
+        publicKey: wallet.getPublicKey(),
+        data,
+        signature: wallet.sign(data)
+      });
+
+      expect(isValid).toBe(true);
+    });
+
+    it("should doesnt verified an invalid signature", () => {
+      const isValid = verifySignature({
+        publicKey: wallet.getPublicKey(),
+        data,
+        signature: new Wallet().sign(data)
+      });
+
+      expect(isValid).toBe(false);
+    });
+  });
 });
