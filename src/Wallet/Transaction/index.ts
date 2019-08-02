@@ -20,9 +20,16 @@ type Input = {
   signature: Elliptic.ec.Signature;
 };
 
+type UpdateArgs = {
+  senderWallet: IWallet;
+  recipient: string;
+  amount: number;
+};
+
 interface ITransaction {
   getOutputMap(): OutputMap;
   getInput(): Input;
+  update({ senderWallet, recipient, amount }: UpdateArgs): void;
 }
 
 class Transaction implements ITransaction {
@@ -35,6 +42,15 @@ class Transaction implements ITransaction {
     this.outputMap = this.createOutputMap({ senderWallet, recipient, amount });
     this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
     this.amount = amount;
+  }
+
+  update({ senderWallet, recipient, amount }: UpdateArgs) {
+    this.outputMap[recipient] = amount;
+
+    const senderPublicKey = senderWallet.getPublicKey() as string;
+    this.outputMap[senderPublicKey] = this.outputMap[senderPublicKey] - amount;
+
+    this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
   }
 
   getOutputMap() {
@@ -96,4 +112,4 @@ class Transaction implements ITransaction {
   }
 }
 
-export { Transaction };
+export { Transaction, ITransaction };

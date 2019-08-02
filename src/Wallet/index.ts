@@ -8,6 +8,13 @@ interface IWallet {
   getPublicKey(): string | Buffer;
   sign<T>(data: T): Elliptic.ec.Signature;
   getBalance(): number;
+  createTransaction({
+    recipient,
+    amount
+  }: {
+    recipient: string;
+    amount: number;
+  }): never | Transaction;
 }
 class Wallet implements IWallet {
   private publicKey: string | Buffer;
@@ -38,7 +45,7 @@ class Wallet implements IWallet {
   }: {
     recipient: string;
     amount: number;
-  }) {
+  }): Transaction | never {
     if (amount > this.balance) {
       throw new Error("Amount exceeds balance");
     }

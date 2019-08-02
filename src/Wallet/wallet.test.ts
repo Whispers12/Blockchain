@@ -1,11 +1,11 @@
-import { Wallet } from "./index";
+import { Wallet, IWallet } from "./index";
 import { STARTING_BALANCE } from "../config";
 import { ec, verifySignature } from "../Crypto/";
 import * as EC from "elliptic";
-import { Transaction } from "./Transaction";
+import { Transaction, ITransaction } from "./Transaction";
 
 describe("Wallet", () => {
-  let wallet: Wallet;
+  let wallet: IWallet;
   let publicKey: String | Buffer;
 
   beforeEach(function() {

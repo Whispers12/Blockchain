@@ -1,10 +1,11 @@
-import { Wallet } from "..";
-import { Transaction } from ".";
+import { Wallet, IWallet } from "..";
+import { Transaction, ITransaction } from ".";
 import { verifySignature } from "../../Crypto/";
+import * as EC from "elliptic";
 
 describe("Transaction", () => {
-  let transaction: Transaction,
-    senderWallet: Wallet,
+  let transaction: ITransaction,
+    senderWallet: IWallet,
     recipient: string,
     amount: number;
 
@@ -101,6 +102,52 @@ describe("Transaction", () => {
           expect(errorMock).toHaveBeenCalled();
         });
       });
+    });
+  });
+
+  describe("update()", () => {
+    let originalSignature: EC.ec.Signature,
+      originalSenderOutput: number,
+      nextRecipient: string,
+      nextAmount: number;
+
+    beforeEach(function() {
+      originalSignature = transaction.getInput().signature;
+      originalSenderOutput = transaction.getOutputMap()[
+        senderWallet.getPublicKey() as string
+      ];
+      nextRecipient = "next-recipient";
+      nextAmount = 50;
+
+      transaction.update({
+        senderWallet,
+        recipient: nextRecipient,
+        amount: nextAmount
+      });
+    });
+
+    it("should outputs the amount to the next recipient", () => {
+      expect(transaction.getOutputMap()[nextRecipient]).toEqual(nextAmount);
+    });
+
+    it("should subtracts the amount from the original sender output amount", () => {
+      expect(
+        transaction.getOutputMap()[senderWallet.getPublicKey() as string]
+      ).toEqual(originalSenderOutput - nextAmount);
+    });
+
+    it("should maintains a total output that matches input amoint", () => {
+      const outputMap = transaction.getOutputMap();
+      const totalAmount = Object.keys(outputMap).reduce(
+        (total, outputKey) => total + outputMap[outputKey],
+        0
+      );
+
+      expect(totalAmount).toEqual(transaction.getInput().amount);
+    });
+
+    it("should resigns the transaction", () => {
+      expect(transaction.getInput().signature).not.toEqual(originalSignature);
     });
   });
 });
