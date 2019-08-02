@@ -3,6 +3,7 @@ import { STARTING_BALANCE } from "../config";
 import { ec, verifySignature } from "../Crypto/";
 import * as EC from "elliptic";
 import { Transaction, ITransaction } from "./Transaction";
+import { ErrorCodes } from "../constants";
 
 describe("Wallet", () => {
   let wallet: IWallet;
@@ -56,7 +57,7 @@ describe("Wallet", () => {
             amount: 999999,
             recipient: "foo-recipient"
           })
-        ).toThrow("Amount exceeds balance");
+        ).toThrow(String(ErrorCodes.EXCEEDS_BALANCE_AMOUNT));
       });
     });
 

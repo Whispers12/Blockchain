@@ -3,6 +3,7 @@ import { STARTING_BALANCE } from "../config";
 import { ec } from "../Crypto/ec";
 import * as Elliptic from "elliptic";
 import { cryptoHash } from "../Crypto";
+import { ErrorCodes } from "../constants";
 
 interface IWallet {
   getPublicKey(): string | Buffer;
@@ -47,7 +48,7 @@ class Wallet implements IWallet {
     amount: number;
   }): Transaction | never {
     if (amount > this.balance) {
-      throw new Error("Amount exceeds balance");
+      throw new Error(String(ErrorCodes.EXCEEDS_BALANCE_AMOUNT));
     }
 
     return new Transaction({ senderWallet: this, recipient, amount });

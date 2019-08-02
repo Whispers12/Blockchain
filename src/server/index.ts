@@ -40,13 +40,22 @@ server.post("/api/mine", (req, res) => {
 server.post("/api/transact", (req, res) => {
   const { amount, recipient } = req.body;
 
-  const transaction = wallet.createTransaction({ recipient, amount });
+  try {
+    let transaction = transactionPool.getExistingTransaction({
+      inputAddress: wallet.getPublicKey()
+    });
 
-  transactionPool.setTransaction(transaction);
+    if (transaction) {
+      transaction.update({ senderWallet: wallet, recipient, amount });
+    } else {
+      transaction = wallet.createTransaction({ recipient, amount });
+    }
+    transactionPool.setTransaction(transaction);
 
-  console.log("transactionPool", transactionPool);
-
-  res.send({ transaction });
+    res.status(200).send({ transaction });
+  } catch (error) {
+    res.status(400).send({ errorCode: Number(error.message) });
+  }
 });
 
 const syncChains = () => {
