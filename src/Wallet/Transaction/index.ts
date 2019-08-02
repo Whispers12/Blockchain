@@ -29,7 +29,7 @@ type UpdateArgs = {
 interface ITransaction {
   getOutputMap(): OutputMap;
   getInput(): Input;
-  update({ senderWallet, recipient, amount }: UpdateArgs): void;
+  update({ senderWallet, recipient, amount }: UpdateArgs): void | never;
 }
 
 class Transaction implements ITransaction {
@@ -45,6 +45,10 @@ class Transaction implements ITransaction {
   }
 
   update({ senderWallet, recipient, amount }: UpdateArgs) {
+    if (amount > this.outputMap[senderWallet.getPublicKey() as string]) {
+      throw new Error("Amount exceeds balance");
+    }
+
     this.outputMap[recipient] = amount;
 
     const senderPublicKey = senderWallet.getPublicKey() as string;
