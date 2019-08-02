@@ -1,24 +1,35 @@
+import { ITransactionPool } from "../Wallet/TransactionPool/";
 import * as Redis from "ioredis";
 import { Blockchain } from "../Blockchain";
+import { ITransaction } from "../Wallet/Transaction";
 
 type TCHANNELS = {
   TEST: "TEST";
   BLOCKCHAIN: "BLOCKCHAIN";
+  TRANSACTION: "TRANSACTION";
 };
 
 const CHANNELS: TCHANNELS = {
   TEST: "TEST",
-  BLOCKCHAIN: "BLOCKCHAIN"
+  BLOCKCHAIN: "BLOCKCHAIN",
+  TRANSACTION: "TRANSACTION"
 };
 
 type Channel = keyof TCHANNELS;
+
+type Constructor = {
+  blockchain: Blockchain;
+  transactionPool: ITransactionPool;
+};
 
 class PubSub {
   subscriber: Redis.Redis;
   publisher: Redis.Redis;
   blockchain: Blockchain;
-  constructor({ blockchain }: { blockchain: Blockchain }) {
+  transactionPool: ITransactionPool;
+  constructor({ blockchain, transactionPool }: Constructor) {
     this.blockchain = blockchain;
+    this.transactionPool = transactionPool;
 
     this.subscriber = new Redis();
     this.publisher = new Redis();
@@ -48,8 +59,15 @@ class PubSub {
 
     const parsedMessage = JSON.parse(message);
 
-    if (channel === CHANNELS.BLOCKCHAIN) {
-      this.blockchain.replaceChain(parsedMessage);
+    switch (channel) {
+      case CHANNELS.BLOCKCHAIN:
+        this.blockchain.replaceChain(parsedMessage);
+        break;
+      case CHANNELS.TRANSACTION:
+        this.transactionPool.setTransaction(parsedMessage);
+        break;
+      default:
+        break;
     }
   }
 
@@ -57,6 +75,13 @@ class PubSub {
     this.publish({
       channel: CHANNELS.BLOCKCHAIN,
       message: JSON.stringify(this.blockchain.chain)
+    });
+  }
+
+  broadcastTransaction(transaction: ITransaction) {
+    this.publish({
+      channel: CHANNELS.TRANSACTION,
+      message: JSON.stringify(transaction)
     });
   }
 }
