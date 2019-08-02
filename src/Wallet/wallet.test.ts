@@ -2,6 +2,7 @@ import { Wallet } from "./index";
 import { STARTING_BALANCE } from "../config";
 import { ec, verifySignature } from "../Crypto/";
 import * as EC from "elliptic";
+import { Transaction } from "./Transaction";
 
 describe("Wallet", () => {
   let wallet: Wallet;
@@ -44,6 +45,41 @@ describe("Wallet", () => {
       });
 
       expect(isValid).toBe(false);
+    });
+  });
+
+  describe("createTransaction()", () => {
+    describe("and amount exceeds the balance", () => {
+      it("throws an error", () => {
+        expect(() =>
+          wallet.createTransaction({
+            amount: 999999,
+            recipient: "foo-recipient"
+          })
+        ).toThrow("Amount exceeds balance");
+      });
+    });
+
+    describe("and the amount is valid", () => {
+      let transaction: Transaction, amount: number, recipient: string;
+
+      beforeEach(function() {
+        amount = 50;
+        recipient = "foo-recipient";
+        transaction = wallet.createTransaction({ amount, recipient });
+      });
+
+      it("should create an instance of Transaction", () => {
+        expect(transaction instanceof Transaction).toBe(true);
+      });
+
+      it("should matches the transaction input with wallet", () => {
+        expect(transaction.getInput().address).toEqual(wallet.getPublicKey());
+      });
+
+      it("should outputs the amount the recipient", () => {
+        expect(transaction.getOutputMap()[recipient]).toEqual(amount);
+      });
     });
   });
 });

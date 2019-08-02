@@ -1,3 +1,4 @@
+import { Transaction } from "./Transaction/";
 import { STARTING_BALANCE } from "../config";
 import { ec } from "../Crypto/ec";
 import * as Elliptic from "elliptic";
@@ -29,6 +30,20 @@ class Wallet implements IWallet {
 
   sign<T>(data: T) {
     return this.keyPair.sign(cryptoHash(data));
+  }
+
+  createTransaction({
+    recipient,
+    amount
+  }: {
+    recipient: string;
+    amount: number;
+  }) {
+    if (amount > this.balance) {
+      throw new Error("Amount exceeds balance");
+    }
+
+    return new Transaction({ senderWallet: this, recipient, amount });
   }
 }
 
