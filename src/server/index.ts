@@ -1,3 +1,5 @@
+import { TransactionPool } from "../Wallet/TransactionPool/";
+import { Wallet } from "../Wallet/";
 import * as fastify from "fastify";
 import { Server, IncomingMessage, ServerResponse } from "http";
 import { Blockchain } from "../Blockchain";
@@ -14,6 +16,8 @@ const server: fastify.FastifyInstance<
   ServerResponse
 > = fastify({});
 const blockchain = new Blockchain();
+const transactionPool = new TransactionPool();
+const wallet = new Wallet();
 const pubsub = new PubSub({ blockchain });
 
 const DEFAULT_PORT = 3000;
@@ -31,6 +35,18 @@ server.post("/api/mine", (req, res) => {
   pubsub.broadcastChain();
 
   res.redirect("/api/blocks");
+});
+
+server.post("/api/transact", (req, res) => {
+  const { amount, recipient } = req.body;
+
+  const transaction = wallet.createTransaction({ recipient, amount });
+
+  transactionPool.setTransaction(transaction);
+
+  console.log("transactionPool", transactionPool);
+
+  res.send({ transaction });
 });
 
 const syncChains = () => {
