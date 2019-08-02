@@ -52,6 +52,8 @@ server.post("/api/transact", (req, res) => {
     }
     transactionPool.setTransaction(transaction);
 
+    pubsub.broadcastTransaction(transaction);
+
     res.status(200).send({ transaction });
   } catch (error) {
     res.status(400).send({ errorCode: Number(error.message) });
