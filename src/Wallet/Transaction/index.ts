@@ -49,7 +49,11 @@ class Transaction implements ITransaction {
       throw new Error("Amount exceeds balance");
     }
 
-    this.outputMap[recipient] = amount;
+    if (!this.outputMap[recipient]) {
+      this.outputMap[recipient] = amount;
+    } else {
+      this.outputMap[recipient] = this.outputMap[recipient] + amount;
+    }
 
     const senderPublicKey = senderWallet.getPublicKey() as string;
     this.outputMap[senderPublicKey] = this.outputMap[senderPublicKey] - amount;

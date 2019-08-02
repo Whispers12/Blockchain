@@ -162,6 +162,31 @@ describe("Transaction", () => {
       it("should resigns the transaction", () => {
         expect(transaction.getInput().signature).not.toEqual(originalSignature);
       });
+
+      describe("and another update for same recipient", () => {
+        let addedAmount: number;
+
+        beforeEach(function() {
+          addedAmount = 80;
+          transaction.update({
+            senderWallet,
+            recipient: nextRecipient,
+            amount: addedAmount
+          });
+        });
+
+        it("adds to the recipient ", () => {
+          expect(transaction.getOutputMap()[nextRecipient]).toEqual(
+            nextAmount + addedAmount
+          );
+        });
+
+        it("should subtracts the amount from original sender output amount", () => {
+          expect(
+            transaction.getOutputMap()[senderWallet.getPublicKey() as string]
+          ).toEqual(originalSenderOutput - nextAmount - addedAmount);
+        });
+      });
     });
   });
 });
