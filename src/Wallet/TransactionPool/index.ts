@@ -7,6 +7,7 @@ interface ITransactionPool {
   }: {
     inputAddress: string | Buffer;
   }): ITransaction | void;
+  setMap(transactionMap: TransactionMap): void;
 }
 
 type TransactionMap = {
@@ -24,6 +25,10 @@ class TransactionPool {
 
   getTransactionMap() {
     return this.transactionMap;
+  }
+
+  setMap(transactionMap: TransactionMap) {
+    this.transactionMap = transactionMap;
   }
 
   getExistingTransaction({
