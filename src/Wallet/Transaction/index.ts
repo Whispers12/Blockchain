@@ -30,6 +30,7 @@ interface ITransaction {
   getOutputMap(): OutputMap;
   getInput(): Input;
   update({ senderWallet, recipient, amount }: UpdateArgs): void | never;
+  getId(): string;
 }
 
 class Transaction implements ITransaction {
@@ -67,6 +68,10 @@ class Transaction implements ITransaction {
 
   getInput() {
     return this.input;
+  }
+
+  getId() {
+    return this.id;
   }
 
   static validTransaction(transaction: ITransaction) {
