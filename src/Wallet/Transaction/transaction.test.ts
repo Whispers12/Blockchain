@@ -79,7 +79,7 @@ describe("Transaction", () => {
 
     describe("when the transaction is valid", () => {
       it("should return true", () => {
-        expect(Transaction.validTransaction(transaction)).toBe(true);
+        expect(Transaction.validateTransaction(transaction)).toBe(true);
       });
     });
 
@@ -90,7 +90,7 @@ describe("Transaction", () => {
             senderWallet.getPublicKey() as string
           ] = 999999;
 
-          expect(Transaction.validTransaction(transaction)).toBe(false);
+          expect(Transaction.validateTransaction(transaction)).toBe(false);
           expect(errorMock).toHaveBeenCalled();
         });
       });
@@ -98,7 +98,7 @@ describe("Transaction", () => {
       describe("and the transaction input signature is invalid", () => {
         it("should return false and logs an error", () => {
           transaction.getInput().signature = new Wallet().sign("data");
-          expect(Transaction.validTransaction(transaction)).toBe(false);
+          expect(Transaction.validateTransaction(transaction)).toBe(false);
           expect(errorMock).toHaveBeenCalled();
         });
       });

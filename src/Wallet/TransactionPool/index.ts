@@ -8,6 +8,7 @@ interface ITransactionPool {
     inputAddress: string | Buffer;
   }): ITransaction | void;
   setMap(transactionMap: TransactionMap): void;
+  validateTransactions(): ITransaction[];
 }
 
 type TransactionMap = {
@@ -29,6 +30,15 @@ class TransactionPool {
 
   setMap(transactionMap: TransactionMap) {
     this.transactionMap = transactionMap;
+  }
+
+  validateTransactions() {
+    const validKeys = Object.keys(this.transactionMap).filter(
+      transactionMapKey =>
+        Transaction.validateTransaction(this.transactionMap[transactionMapKey])
+    );
+
+    return validKeys.map(key => this.transactionMap[key]);
   }
 
   getExistingTransaction({

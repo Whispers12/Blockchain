@@ -38,4 +38,43 @@ describe("Transaction pool", () => {
       ).toBe(transaction);
     });
   });
+
+  describe("validTransactions()", () => {
+    let validTransactions: Array<ITransaction>, errorMock: typeof jest.fn;
+
+    beforeEach(function() {
+      validTransactions = [];
+      errorMock = jest.fn();
+
+      global.console.error = errorMock;
+
+      for (let i = 0; i < 10; i++) {
+        transaction = new Transaction({
+          senderWallet,
+          recipient: "any-recipient",
+          amount: 30
+        });
+
+        if (i % 3 === 0) {
+          transaction.getInput().amount = 999999;
+        } else if (i % 3 === 1) {
+          transaction.getInput().signature = new Wallet().sign("foo");
+        } else {
+          validTransactions.push(transaction);
+        }
+
+        transactionPool.setTransaction(transaction);
+      }
+    });
+
+    it("should returns valid transaction", () => {
+      expect(transactionPool.validateTransactions()).toEqual(validTransactions);
+    });
+
+    it("should logs error for invalid transactions", () => {
+      transactionPool.validateTransactions();
+
+      expect(errorMock).toHaveBeenCalled();
+    });
+  });
 });

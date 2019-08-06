@@ -74,7 +74,7 @@ class Transaction implements ITransaction {
     return this.id;
   }
 
-  static validTransaction(transaction: ITransaction) {
+  static validateTransaction(transaction: ITransaction) {
     const { address, amount, signature } = transaction.getInput();
     const outputMap = transaction.getOutputMap();
 
