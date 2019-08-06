@@ -1,8 +1,13 @@
 import { Block } from "./Block";
 import { cryptoHash } from "../Crypto";
 
+interface IBlockchain {
+  replaceChain(chain: Chain): void;
+  addBlock({ data }: any): this;
+}
+
 type Chain = Array<Block>;
-class Blockchain {
+class Blockchain implements IBlockchain {
   chain: Chain;
   constructor() {
     this.chain = [Block.genesis()];
@@ -64,4 +69,4 @@ class Blockchain {
   }
 }
 
-export { Blockchain };
+export { Blockchain, IBlockchain };

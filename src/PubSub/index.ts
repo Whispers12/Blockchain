@@ -22,7 +22,12 @@ type Constructor = {
   transactionPool: ITransactionPool;
 };
 
-class PubSub {
+interface IPubSub {
+  broadcastChain(): void;
+  broadcastTransaction(transaction: ITransaction): void;
+}
+
+class PubSub implements IPubSub {
   subscriber: Redis.Redis;
   publisher: Redis.Redis;
   blockchain: Blockchain;
@@ -41,20 +46,20 @@ class PubSub {
     );
   }
 
-  subscribeToChannels() {
+  private subscribeToChannels() {
     (Object.keys(CHANNELS) as Array<Channel>).forEach(channel => {
       const result = CHANNELS[channel];
       this.subscriber.subscribe(result);
     });
   }
 
-  publish({ channel, message }: { channel: string; message: string }) {
+  private publish({ channel, message }: { channel: string; message: string }) {
     this.subscriber.unsubscribe(channel);
     this.publisher.publish(channel, message);
     this.subscriber.subscribe(channel);
   }
 
-  handleMessage(channel: string, message: string) {
+  private handleMessage(channel: string, message: string) {
     console.log(`Message recieved. Channel: ${channel}. Message: ${message}`);
 
     const parsedMessage = JSON.parse(message);
@@ -86,4 +91,4 @@ class PubSub {
   }
 }
 
-export { PubSub };
+export { PubSub, IPubSub };
