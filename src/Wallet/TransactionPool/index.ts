@@ -1,4 +1,6 @@
 import { ITransaction, Transaction } from "../Transaction";
+import { Chain } from "../../Blockchain";
+import { IAuthTransaction } from "../Transaction/AuthTransaction";
 interface ITransactionPool {
   setTransaction(transaction: ITransaction): void;
   getTransactionMap(): TransactionMap;
@@ -8,13 +10,15 @@ interface ITransactionPool {
     inputAddress: string | Buffer;
   }): ITransaction | void;
   setMap(transactionMap: TransactionMap): void;
-  validateTransactions(): ITransaction[];
+  getValidTransactions(): ITransaction[];
+  clear(): void;
+  clearBlockchainTransactions({ chain }: { chain: Chain }): void;
 }
 
 type TransactionMap = {
   [id: string]: ITransaction;
 };
-class TransactionPool {
+class TransactionPool implements ITransactionPool {
   transactionMap: TransactionMap;
   constructor() {
     this.transactionMap = {};
@@ -28,11 +32,27 @@ class TransactionPool {
     return this.transactionMap;
   }
 
+  clear() {
+    this.transactionMap = {};
+  }
+
+  clearBlockchainTransactions({ chain }: { chain: Chain }) {
+    for (let i = 1; i < chain.length; i++) {
+      const block = chain[i];
+
+      for (let transaction of block.data) {
+        if (this.transactionMap[transaction.getId()]) {
+          delete this.transactionMap[transaction.getId()];
+        }
+      }
+    }
+  }
+
   setMap(transactionMap: TransactionMap) {
     this.transactionMap = transactionMap;
   }
 
-  validateTransactions() {
+  getValidTransactions() {
     const validKeys = Object.keys(this.transactionMap).filter(
       transactionMapKey =>
         Transaction.validateTransaction(this.transactionMap[transactionMapKey])

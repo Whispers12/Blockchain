@@ -1,6 +1,7 @@
 import { TransactionPool, ITransactionPool } from ".";
 import { Transaction, ITransaction } from "../Transaction/";
 import { Wallet, IWallet } from "../";
+import { Blockchain } from "../../Blockchain";
 
 describe("Transaction pool", () => {
   let transactionPool: ITransactionPool,
@@ -68,13 +69,51 @@ describe("Transaction pool", () => {
     });
 
     it("should returns valid transaction", () => {
-      expect(transactionPool.validateTransactions()).toEqual(validTransactions);
+      expect(transactionPool.getValidTransactions()).toEqual(validTransactions);
     });
 
     it("should logs error for invalid transactions", () => {
-      transactionPool.validateTransactions();
+      transactionPool.getValidTransactions();
 
       expect(errorMock).toHaveBeenCalled();
+    });
+  });
+
+  describe("clear()", () => {
+    it("should clears the transaction", () => {
+      transactionPool.clear();
+
+      expect(transactionPool.getTransactionMap()).toEqual({});
+    });
+  });
+
+  describe("clearBlockchainTransactions()", () => {
+    it("should clearBlockchainTransactions", () => {
+      const blockchain = new Blockchain();
+      const expectedTransactionMap: {
+        [transactionId: string]: ITransaction;
+      } = {};
+
+      for (let i = 0; i < 6; i++) {
+        const transaction = new Wallet().createTransaction({
+          recipient: "foo",
+          amount: 20
+        });
+
+        transactionPool.setTransaction(transaction);
+
+        if (i % 2 === 0) {
+          blockchain.addBlock({ data: [transaction] });
+        } else {
+          expectedTransactionMap[transaction.getId()] = transaction;
+        }
+      }
+
+      transactionPool.clearBlockchainTransactions({ chain: blockchain.chain });
+
+      expect(transactionPool.getTransactionMap()).toEqual(
+        expectedTransactionMap
+      );
     });
   });
 });

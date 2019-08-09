@@ -2,6 +2,8 @@ import { Wallet, IWallet } from "..";
 import { Transaction, ITransaction } from ".";
 import { verifySignature } from "../../Crypto/";
 import * as EC from "elliptic";
+import { REWARD_INPUT, MINING_REWARD } from "../../config";
+import { IAuthTransaction, AuthTransaction } from "./AuthTransaction";
 
 describe("Transaction", () => {
   let transaction: ITransaction,
@@ -187,6 +189,25 @@ describe("Transaction", () => {
           ).toEqual(originalSenderOutput - nextAmount - addedAmount);
         });
       });
+    });
+  });
+
+  describe("rewardTransaction()", () => {
+    let rewardTransaction: IAuthTransaction, minerWallet: IWallet;
+
+    beforeEach(function() {
+      minerWallet = new Wallet();
+      rewardTransaction = AuthTransaction.rewardTransaction({ minerWallet });
+    });
+
+    it("should creates a transaction with the reward input", () => {
+      expect(rewardTransaction.getInput()).toEqual(REWARD_INPUT);
+    });
+
+    it("should creates ones transaction for the miner with mining reward", () => {
+      expect(
+        rewardTransaction.getOutputMap()[minerWallet.getPublicKey() as string]
+      ).toEqual(MINING_REWARD);
     });
   });
 });

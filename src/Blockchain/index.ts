@@ -2,8 +2,9 @@ import { Block } from "./Block";
 import { cryptoHash } from "../Crypto";
 
 interface IBlockchain {
-  replaceChain(chain: Chain): void;
+  replaceChain(chain: Chain, onSuccess?: Function): void;
   addBlock({ data }: any): this;
+  getChain(): Chain;
 }
 
 type Chain = Array<Block>;
@@ -11,6 +12,10 @@ class Blockchain implements IBlockchain {
   chain: Chain;
   constructor() {
     this.chain = [Block.genesis()];
+  }
+
+  public getChain() {
+    return this.chain;
   }
 
   public addBlock({ data }: { data: any }) {
@@ -53,7 +58,7 @@ class Blockchain implements IBlockchain {
     return true;
   }
 
-  replaceChain(chain: Chain) {
+  replaceChain(chain: Chain, onSuccess?: Function) {
     if (chain.length <= this.chain.length) {
       console.error("The incoming chain must be longer");
       return;
@@ -64,9 +69,10 @@ class Blockchain implements IBlockchain {
       return;
     }
 
+    if (onSuccess) onSuccess();
     console.log("replacing chain with", chain);
     this.chain = chain;
   }
 }
 
-export { Blockchain, IBlockchain };
+export { Blockchain, IBlockchain, Chain };

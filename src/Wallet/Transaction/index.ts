@@ -34,15 +34,23 @@ interface ITransaction {
 }
 
 class Transaction implements ITransaction {
-  private id: string;
-  private outputMap: OutputMap;
-  private amount: number;
-  private input: Input;
+  id: string;
+  outputMap: OutputMap;
+  input: Input;
+
   constructor({ senderWallet, recipient, amount }: ConstructorType) {
     this.id = uuid();
-    this.outputMap = this.createOutputMap({ senderWallet, recipient, amount });
-    this.input = this.createInput({ senderWallet, outputMap: this.outputMap });
-    this.amount = amount;
+
+    this.outputMap = this.createOutputMap({
+      senderWallet,
+      recipient,
+      amount
+    });
+
+    this.input = this.createInput({
+      senderWallet,
+      outputMap: this.outputMap
+    });
   }
 
   update({ senderWallet, recipient, amount }: UpdateArgs) {
@@ -75,6 +83,7 @@ class Transaction implements ITransaction {
   }
 
   static validateTransaction(transaction: ITransaction) {
+    // @ts-ignore
     const { address, amount, signature } = transaction.getInput();
     const outputMap = transaction.getOutputMap();
 
