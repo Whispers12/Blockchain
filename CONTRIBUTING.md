@@ -59,10 +59,12 @@ The following is the list of supported scopes:
 - **pubSub**
 - **server**
 - **tools**
-- **blockchaino**
+- **blockchain**
 - **block**
+- **crypto**
 - **transaction**
-- **transaction pool**
+- **transaction-pool**
+- **transaction-miner**
 
 There are currently a few exceptions to the "use package name" rule:
 
