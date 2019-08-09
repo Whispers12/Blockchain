@@ -5,7 +5,11 @@ import { REWARD_INPUT, MINING_REWARD } from "../config";
 import { Wallet } from "../Wallet";
 
 interface IBlockchain {
-  replaceChain(chain: Chain, onSuccess?: Function): void;
+  replaceChain(
+    chain: Chain,
+    validateTransactions?: boolean,
+    onSuccess?: Function
+  ): void;
   addBlock({ data }: any): this;
   getChain(): Chain;
   validateTransactionData({ chain }: { chain: Chain }): boolean;
@@ -113,7 +117,11 @@ class Blockchain implements IBlockchain {
     return true;
   }
 
-  replaceChain(chain: Chain, onSuccess?: Function) {
+  replaceChain(
+    chain: Chain,
+    validateTransactions?: boolean,
+    onSuccess?: Function
+  ) {
     if (chain.length <= this.chain.length) {
       console.error("The incoming chain must be longer");
       return;
@@ -121,6 +129,11 @@ class Blockchain implements IBlockchain {
 
     if (!Blockchain.isValidChain(chain)) {
       console.error("The incoming must be valid");
+      return;
+    }
+
+    if (validateTransactions && !this.validateTransactionData({ chain })) {
+      console.log("The incoming chain has invalid transaction data");
       return;
     }
 

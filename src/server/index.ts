@@ -82,7 +82,7 @@ const syncWithRootState = () => {
       const rootChain = JSON.parse(body);
 
       console.log("replace chain on a sync with", rootChain);
-      blockchain.replaceChain(rootChain);
+      blockchain.replaceChain(rootChain, true);
     }
   });
 
