@@ -1,7 +1,8 @@
-import { Transaction } from "../Wallet/Transaction";
+import { Transaction, ITransaction } from "../Wallet/Transaction";
 import { Block } from "./Block";
 import { cryptoHash } from "../Crypto";
 import { REWARD_INPUT, MINING_REWARD } from "../config";
+import { Wallet } from "../Wallet";
 
 interface IBlockchain {
   replaceChain(chain: Chain, onSuccess?: Function): void;
@@ -24,9 +25,10 @@ class Blockchain implements IBlockchain {
   validateTransactionData({ chain }: { chain: Chain }) {
     for (let i = 1; i < chain.length; i++) {
       const block = chain[i];
+      const transactionSet = new Set();
       let rewardTransactionCount = 0;
 
-      for (let transaction of block.data) {
+      for (let transaction of block.data as ITransaction[]) {
         if (transaction.getInput().address === REWARD_INPUT.address) {
           rewardTransactionCount += 1;
 
@@ -44,6 +46,25 @@ class Blockchain implements IBlockchain {
           if (!Transaction.validateTransaction(transaction)) {
             console.error("Invalid transaction");
             return false;
+          }
+
+          const trueBalance = Wallet.calculateBalance({
+            chain: this.chain,
+            address: transaction.getInput().address as string
+          });
+
+          if (transaction.getInput().amount !== trueBalance) {
+            console.error("Invalid input amount");
+            return false;
+          }
+
+          if (transactionSet.has(transaction)) {
+            console.error(
+              "An identical transaction appears more than one in one block"
+            );
+            return false;
+          } else {
+            transactionSet.add(transaction);
           }
         }
       }

@@ -263,11 +263,45 @@ describe("Blockchain", () => {
     });
 
     describe("and the transaction data has at least one malformed input", () => {
-      it("should returns false", () => {});
+      it("should returns false", () => {
+        const publicKey = wallet.getPublicKey() as string;
+        const evilOutputMap = {
+          [publicKey]: 20000,
+          fooRecipient: 100
+        };
+
+        const evilTransaction = {
+          getInput: () => ({
+            timestamp: Date.now(),
+            amount: wallet.getBalance(),
+            address: wallet.getPublicKey(),
+            signature: wallet.sign(evilOutputMap)
+          }),
+          getOutputMap: () => evilOutputMap
+        };
+
+        newChain.addBlock({ data: [evilTransaction, rewardTransaction] });
+
+        const isValid = blockchain.validateTransactionData({
+          chain: newChain.chain
+        });
+
+        expect(isValid).toBe(false);
+      });
     });
 
     describe("and the block contains multiple identical transactions", () => {
-      it("should returns false", () => {});
+      it("should returns false", () => {
+        newChain.addBlock({
+          data: [transaction, transaction, transaction, rewardTransaction]
+        });
+
+        const isValid = blockchain.validateTransactionData({
+          chain: newChain.chain
+        });
+
+        expect(isValid).toBe(false);
+      });
     });
   });
 });
